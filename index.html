@@ -26,7 +26,7 @@ h2{font-size:18px;margin:24px 0 12px}.channels{display:grid;grid-template-column
 <div class="screen" id="screen"><video id="liveVideo" controls playsinline autoplay muted></video><div class="tvmsg" id="placeholder"><div class="live"><i></i> AO VIVO</div><strong id="playerTitle">TV Online Freire</strong><span id="playerMsg">Selecione um canal para iniciar a transmissão.</span><button id="officialOpen" onclick="openOfficialChannel()" style="display:none;margin-top:8px">▶ Assistir ao vivo</button></div></div>
 <div class="controls"><button onclick="fullscreen()">⛶ Tela cheia</button><button class="secondary" onclick="reloadPlayer()">↻ Recarregar</button><button class="secondary" onclick="stopPlayer()">■ Parar</button></div>
 </section>
-<div class="status" id="status">TV Online Freire • V3.1 — teste GitHub Pages</div>
+<div class="status" id="status">TV Online Freire • V3.2 — Record oficial RecordPlus</div>
 <h2>Canais</h2>
 <section class="channels">
 <div class="channel" onclick="openChannel('Globo')"><div class="badge">G</div><b>Globo</b><small>TV Globo • Globoplay</small></div>
@@ -67,6 +67,13 @@ async function openChannel(name){
     setMsg('Transmissão oficial pelo Globoplay');
     b.textContent='▶ Assistir Globo ao vivo';b.style.display='inline-block';
     setStatus('Globo • transmissão oficial');
+    return;
+  }
+  if(name==='Record'){
+    setMsg('Abrindo a transmissão oficial da Record Paulista no RecordPlus...');
+    b.textContent='▶ Assistir Record Paulista ao vivo';
+    b.style.display='inline-block';
+    setStatus('Record Paulista • RecordPlus oficial');
     return;
   }
   if(name!=='Record'){
@@ -117,7 +124,13 @@ async function openChannel(name){
   }
 }
 
-function openOfficialChannel(){if(current==='Record')return;if(current)window.location.href=channels[current]}
+function openOfficialChannel(){
+  if(current==='Record'){
+    window.location.href='https://descubra.recordplus.com/';
+    return;
+  }
+  if(current)window.location.href=channels[current];
+}
 function reloadPlayer(){if(current)openChannel(current)}
 async function stopPlayer(){
   await destroyPlayer();
