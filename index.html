@@ -44,9 +44,25 @@ SBT:'https://www.sbt.com.br/ao-vivo'
 let current=''; let hlsPlayer=null;
 function openChannel(name){
  current=name;
- const v=document.getElementById('liveVideo'); const p=document.getElementById('placeholder'); const b=document.getElementById('officialOpen'); v.style.display='none'; p.style.display='flex'; b.style.display='none';
- document.getElementById('playerTitle').textContent=name; document.getElementById('playerMsg').textContent='';
- if(hlsPlayer){hlsPlayer.destroy();hlsPlayer=null} if(name==='Globo'){ document.getElementById('playerMsg').textContent='Transmissão oficial pelo Globoplay'; b.textContent='▶ Assistir Globo ao vivo'; b.style.display='inline-block'; document.getElementById('status').textContent='Globo • transmissão oficial'; } else if(name==='Record'){ document.getElementById('playerMsg').textContent='Transmissão oficial da Record Paulista pelo RecordPlus'; b.textContent='▶ Assistir Record ao vivo'; b.style.display='inline-block'; document.getElementById('status').textContent='Record Paulista • transmissão oficial pelo RecordPlus'; hlsPlayer=new Hls({enableWorker:true,lowLatencyMode:false,startLevel:-1,backBufferLength:15,maxBufferLength:30,maxBufferSize:40*1000*1000,maxMaxBufferLength:60,manifestLoadingMaxRetry:10,manifestLoadingRetryDelay:800,manifestLoadingMaxRetryTimeout:15000,levelLoadingMaxRetry:10,levelLoadingRetryDelay:800,levelLoadingMaxRetryTimeout:15000,fragLoadingMaxRetry:10,fragLoadingRetryDelay:800,fragLoadingMaxRetryTimeout:15000,capLevelToPlayerSize:true}); hlsPlayer.on(Hls.Events.MANIFEST_PARSED,()=>{p.style.display='none';v.style.display='block';document.getElementById('status').textContent='Record SP • sinal ao vivo conectado';v.play().catch(()=>{})}); hlsPlayer.on(Hls.Events.ERROR,(e,d)=>{if(!d.fatal)return;document.getElementById('status').textContent='Record SP • reconectando ao sinal...';if(d.type===Hls.ErrorTypes.NETWORK_ERROR){setTimeout(()=>{if(hlsPlayer)hlsPlayer.startLoad()},1500)}else if(d.type===Hls.ErrorTypes.MEDIA_ERROR){setTimeout(()=>{if(hlsPlayer)hlsPlayer.recoverMediaError()},1000)}else{setTimeout(()=>{if(current==='Record')openChannel('Record')},2500)}}); hlsPlayer.loadSource(u + (u.includes('?')?'&':'?') + '_t=' + Date.now()); hlsPlayer.attachMedia(v); } else if(v.canPlayType('application/vnd.apple.mpegurl')){p.style.display='none';v.src=u + (u.includes('?')?'&':'?') + '_t=' + Date.now();v.onloadedmetadata=()=>{document.getElementById('status').textContent='Record SP • sinal ao vivo conectado';v.play().catch(()=>{})}} else {document.getElementById('status').textContent='Record • navegador sem suporte ao sinal';} } else { document.getElementById('playerMsg').textContent='Canal ainda em preparação.'; document.getElementById('status').textContent='Canal ainda em preparação.'; }
+ const v=document.getElementById('liveVideo');
+ const p=document.getElementById('placeholder');
+ const b=document.getElementById('officialOpen');
+ v.style.display='none'; p.style.display='flex'; b.style.display='none';
+ document.getElementById('playerTitle').textContent=name;
+ document.getElementById('playerMsg').textContent='';
+ if(hlsPlayer){hlsPlayer.destroy();hlsPlayer=null}
+ if(name==='Globo'){
+   document.getElementById('playerMsg').textContent='Transmissão oficial pelo Globoplay';
+   b.textContent='▶ Assistir Globo ao vivo'; b.style.display='inline-block';
+   document.getElementById('status').textContent='Globo • transmissão oficial';
+ } else if(name==='Record'){
+   document.getElementById('playerMsg').textContent='Transmissão oficial da Record Paulista pelo RecordPlus';
+   b.textContent='▶ Assistir Record ao vivo'; b.style.display='inline-block';
+   document.getElementById('status').textContent='Record Paulista • transmissão oficial pelo RecordPlus';
+ } else {
+   document.getElementById('playerMsg').textContent='Canal ainda em preparação.';
+   document.getElementById('status').textContent='Canal ainda em preparação.';
+ }
 }
 function openOfficialChannel(){window.location.href=channels[current];}
 function reloadPlayer(){if(current)openChannel(current)}
