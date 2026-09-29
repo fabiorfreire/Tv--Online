@@ -26,7 +26,7 @@ h2{font-size:18px;margin:24px 0 12px}.channels{display:grid;grid-template-column
 <div class="screen" id="screen"><video id="liveVideo" controls playsinline autoplay muted></video><div class="tvmsg" id="placeholder"><div class="live"><i></i> AO VIVO</div><strong id="playerTitle">TV Online Freire</strong><span id="playerMsg">Selecione um canal para iniciar a transmissão.</span><button id="officialOpen" onclick="openOfficialChannel()" style="display:none;margin-top:8px">▶ Assistir ao vivo</button></div></div>
 <div class="controls"><button onclick="fullscreen()">⛶ Tela cheia</button><button class="secondary" onclick="reloadPlayer()">↻ Recarregar</button><button class="secondary" onclick="stopPlayer()">■ Parar</button></div>
 </section>
-<div class="status" id="status">TV Online Freire • V3.4 — Record + SBT oficial</div>
+<div class="status" id="status">TV Online Freire • V3.3 — Record + SBT oficiais</div>
 <h2>Canais</h2>
 <section class="channels">
 <div class="channel" onclick="openChannel('Globo')"><div class="badge">G</div><b>Globo</b><small>TV Globo • Globoplay</small></div>
@@ -77,10 +77,17 @@ async function openChannel(name){
     return;
   }
   if(name==='SBT'){
-    setMsg('Abrindo a transmissão oficial do SBT Ao Vivo...');
-    b.textContent='▶ Assistir SBT ao vivo';
-    b.style.display='inline-block';
-    setStatus('SBT • transmissão oficial');
+    setMsg('Carregando o player oficial do SBT Ao Vivo...');
+    b.style.display='none';
+    const iframe=document.createElement('iframe');
+    iframe.src='https://www.youtube.com/embed/ABVQXgr2LW4?autoplay=1&mute=0&playsinline=1';
+    iframe.title='SBT Ao Vivo';
+    iframe.allow='autoplay; encrypted-media; picture-in-picture';
+    iframe.allowFullscreen=true;
+    iframe.style.cssText='width:100%;height:100%;border:0;display:block;background:#000';
+    document.getElementById('screen').appendChild(iframe);
+    document.getElementById('placeholder').style.display='none';
+    setStatus('SBT • player oficial incorporado');
     return;
   }
   if(name!=='Record' && name!=='SBT'){
