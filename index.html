@@ -21,10 +21,10 @@ h2{font-size:18px;margin:24px 0 12px}.channels{display:grid;grid-template-column
 <header><div class="top"><div class="logo">F</div><div><h1>TV Online Freire</h1><div class="sub">Acesso às transmissões oficiais</div></div></div></header>
 <main>
 <section class="player">
-<div class="screen" id="screen"><video id="liveVideo" controls playsinline autoplay></video><div class="tvmsg" id="placeholder"><div class="live"><i></i> AO VIVO</div><strong id="playerTitle">TV Online Freire</strong><span id="playerMsg">Selecione um canal para iniciar a transmissão.</span><button id="officialOpen" onclick="openOfficialChannel()" style="display:none;margin-top:8px">▶ Assistir ao vivo</button></div></div>
+<div class="screen" id="screen"><video id="liveVideo" controls playsinline autoplay muted></video><div class="tvmsg" id="placeholder"><div class="live"><i></i> AO VIVO</div><strong id="playerTitle">TV Online Freire</strong><span id="playerMsg">Selecione um canal para iniciar a transmissão.</span><button id="officialOpen" onclick="openOfficialChannel()" style="display:none;margin-top:8px">▶ Assistir ao vivo</button></div></div>
 <div class="controls"><button onclick="fullscreen()">⛶ Tela cheia</button><button class="secondary" onclick="reloadPlayer()">↻ Recarregar</button><button class="secondary" onclick="stopPlayer()">■ Parar</button></div>
 </section>
-<div class="status" id="status">TV Online Freire • V2.3 — Record oficial</div>
+<div class="status" id="status">TV Online Freire • V2.4 — player Record recuperado</div>
 <h2>Canais</h2>
 <section class="channels">
 <div class="channel" onclick="openChannel('Globo')"><div class="badge">G</div><b>Globo</b><small>TV Globo • Globoplay</small></div>
@@ -33,23 +33,24 @@ h2{font-size:18px;margin:24px 0 12px}.channels{display:grid;grid-template-column
 <div class="channel" onclick="openChannel('SBT')"><div class="badge">S</div><b>SBT</b><small>SBT • Ao Vivo</small></div>
 </section>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
 <script>
 const channels={
 Globo:'https://globoplay.globo.com/tv-globo/ao-vivo/7832875/',
-Record:'https://descubra.recordplus.com/',
+Record:'https://cdn.jmvstream.com/w/LVW-10842/LVW10842_513N26MDBL/chunklist.m3u8?webview_player=true',
 Band:'https://www.band.com.br/ao-vivo',
 SBT:'https://www.sbt.com.br/ao-vivo'
 };
-let current='';
+let current=''; let hlsPlayer=null;
 function openChannel(name){
  current=name;
  const v=document.getElementById('liveVideo'); const p=document.getElementById('placeholder'); const b=document.getElementById('officialOpen'); v.style.display='none'; p.style.display='flex'; b.style.display='none';
  document.getElementById('playerTitle').textContent=name; document.getElementById('playerMsg').textContent='';
- if(name==='Globo'){ document.getElementById('playerMsg').textContent='Transmissão oficial pelo Globoplay'; b.textContent='▶ Assistir Globo ao vivo'; b.style.display='inline-block'; document.getElementById('status').textContent='Globo • transmissão oficial'; } else if(name==='Record'){ document.getElementById('playerMsg').textContent='Transmissão oficial pelo RecordPlus'; b.textContent='▶ Assistir Record ao vivo'; b.style.display='inline-block'; document.getElementById('status').textContent='Record • transmissão oficial'; } else { document.getElementById('playerMsg').textContent='Canal ainda em preparação.'; document.getElementById('status').textContent='Canal ainda em preparação.'; }
+ if(hlsPlayer){hlsPlayer.destroy();hlsPlayer=null} if(name==='Globo'){ document.getElementById('playerMsg').textContent='Transmissão oficial pelo Globoplay'; b.textContent='▶ Assistir Globo ao vivo'; b.style.display='inline-block'; document.getElementById('status').textContent='Globo • transmissão oficial'; } else if(name==='Record'){ b.style.display='none'; v.style.display='block'; document.getElementById('status').textContent='Record SP • conectando ao sinal ao vivo...'; const u=channels.Record; if(window.Hls && Hls.isSupported()){ hlsPlayer=new Hls({enableWorker:true,lowLatencyMode:false,backBufferLength:30,maxBufferLength:45,maxBufferSize:60*1000*1000,maxMaxBufferLength:90,manifestLoadingMaxRetry:6,manifestLoadingRetryDelay:1000,manifestLoadingMaxRetryTimeout:10000,levelLoadingMaxRetry:8,levelLoadingRetryDelay:1000,fragLoadingMaxRetry:8,fragLoadingRetryDelay:1000,fragLoadingMaxRetryTimeout:12000}); hlsPlayer.on(Hls.Events.MANIFEST_PARSED,()=>{document.getElementById('status').textContent='Record SP • sinal ao vivo conectado';v.play().catch(()=>{})}); hlsPlayer.on(Hls.Events.ERROR,(e,d)=>{if(d.fatal)document.getElementById('status').textContent='Record SP • erro no sinal, tentando reconectar...'}); hlsPlayer.loadSource(u); hlsPlayer.attachMedia(v); } else if(v.canPlayType('application/vnd.apple.mpegurl')){v.src=u;v.onloadedmetadata=()=>{document.getElementById('status').textContent='Record SP • sinal ao vivo conectado';v.play().catch(()=>{})}} else {document.getElementById('status').textContent='Record • navegador sem suporte ao sinal';} } else { document.getElementById('playerMsg').textContent='Canal ainda em preparação.'; document.getElementById('status').textContent='Canal ainda em preparação.'; }
 }
 function openOfficialChannel(){window.location.href=channels[current];}
 function reloadPlayer(){if(current)openChannel(current)}
-function stopPlayer(){const v=document.getElementById('liveVideo');v.pause();v.removeAttribute('src');v.load();v.style.display='none';document.getElementById('officialOpen').style.display='none';document.getElementById('placeholder').style.display='flex';current='';document.getElementById('playerTitle').textContent='TV Online Freire';document.getElementById('playerMsg').textContent='Selecione um canal para iniciar a transmissão.';document.getElementById('status').textContent='Nenhum canal selecionado'}
+function stopPlayer(){const v=document.getElementById('liveVideo');if(hlsPlayer){hlsPlayer.destroy();hlsPlayer=null}v.pause();v.removeAttribute('src');v.load();v.style.display='none';document.getElementById('officialOpen').style.display='none';document.getElementById('placeholder').style.display='flex';current='';document.getElementById('playerTitle').textContent='TV Online Freire';document.getElementById('playerMsg').textContent='Selecione um canal para iniciar a transmissão.';document.getElementById('status').textContent='Nenhum canal selecionado'}
 function fullscreen(){document.querySelector('.player').requestFullscreen?.()}
 </script>
 </body>
