@@ -82,7 +82,7 @@ async function openChannel(name){
     const old=screen.querySelector('.sbt-player'); if(old) old.remove();
     const iframe=document.createElement('iframe');
     iframe.className='sbt-player';
-    iframe.src='https://www.youtube.com/user/SBTonline/live?autoplay=1&playsinline=1';
+    iframe.src='https://youtube-player.sbtlab.io/?videoID=R0ZJ4uevOd4&t=0&adunit=%2F1011235%2Fsbt%2Fhome%2Fao-vivo&iu=%2F1011235%2Fsbt%2Fhome%2Fao-vivo&env=vp&gdfp_req=1&output=vast&sz=1280x720&vid=R0ZJ4uevOd4&vpa=click&vpmute=0&hl=pt&plcmt=1&vcomp=2&cust_params=conteudo%3Dao-vivo%26tema%3Dsbt-live%26tipo%3Dlive';
     iframe.title='SBT Ao Vivo';
     iframe.allow='autoplay; encrypted-media; picture-in-picture';
     iframe.allowFullscreen=true;
