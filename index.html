@@ -49,6 +49,8 @@ function setMsg(t){document.getElementById('playerMsg').textContent=t}
 function setStatus(t){document.getElementById('status').textContent=t}
 
 async function destroyPlayer(){
+  const sbt=document.querySelector('.sbt-player');
+  if(sbt) sbt.remove();
   if(shakaPlayer){try{await shakaPlayer.destroy()}catch(e){} shakaPlayer=null}
   const v=document.getElementById('liveVideo');
   v.pause();v.removeAttribute('src');v.load();v.style.display='none';
