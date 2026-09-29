@@ -43,7 +43,7 @@ Band:'https://www.band.com.br/ao-vivo',
 SBT:'https://www.sbt.com.br/ao-vivo'
 };
 let current=''; let hlsPlayer=null; let shakaPlayer=null;
-function openChannel(name){
+async function openChannel(name){
  current=name;
  const v=document.getElementById('liveVideo');
  const p=document.getElementById('placeholder');
