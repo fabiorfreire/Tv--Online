@@ -34,7 +34,7 @@ h2{font-size:18px;margin:24px 0 12px}.channels{display:grid;grid-template-column
 <div class="channel" onclick="openChannel('SBT')"><div class="badge">S</div><b>SBT</b><small>SBT • Ao Vivo</small></div>
 </section>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.12/dist/shaka-player.compiled.min.js"></script>
 <script>
 const channels={
 Globo:'https://globoplay.globo.com/tv-globo/ao-vivo/7832875/',
@@ -42,7 +42,7 @@ Record:'https://record.r7.com/record-emissoras/sudeste/record-paulista/',
 Band:'https://www.band.com.br/ao-vivo',
 SBT:'https://www.sbt.com.br/ao-vivo'
 };
-let current=''; let hlsPlayer=null;
+let current=''; let hlsPlayer=null; let shakaPlayer=null;
 function openChannel(name){
  current=name;
  const v=document.getElementById('liveVideo');
@@ -57,19 +57,33 @@ function openChannel(name){
    b.textContent='▶ Assistir Globo ao vivo'; b.style.display='inline-block';
    document.getElementById('status').textContent='Globo • transmissão oficial';
  } else if(name==='Record'){
-   document.getElementById('playerMsg').textContent='Carregando a página oficial da Record Paulista dentro do aplicativo...';
-   b.textContent='▶ Abrir Record Paulista ao vivo'; b.style.display='inline-block';
-   document.getElementById('status').textContent='Record Paulista • teste de exibição na tela';
-   const oldFrame=document.getElementById('officialFrame');
-   if(oldFrame) oldFrame.remove();
-   const f=document.createElement('iframe');
-   f.id='officialFrame';
-   f.src=channels.Record;
-   f.title='Record Paulista ao vivo';
-   f.allow='autoplay; fullscreen; picture-in-picture';
-   f.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;z-index:5;';
-   document.querySelector('.screen').appendChild(f);
-   p.style.display='none';
+   document.getElementById('playerMsg').textContent='Iniciando Record São Paulo • transmissão oficial';
+   b.style.display='none';
+   document.getElementById('status').textContent='Record São Paulo • transmissão oficial';
+   const oldFrame=document.getElementById('officialFrame'); if(oldFrame) oldFrame.remove();
+   if(shakaPlayer){try{await shakaPlayer.destroy()}catch(e){} shakaPlayer=null}
+   shaka.polyfill.installAll();
+   if(!shaka.Player.isBrowserSupported()){
+     document.getElementById('playerMsg').textContent='Navegador sem suporte ao player oficial.';
+   } else {
+     try{
+       const r=await fetch('https://api-epg.recordplus.com/v1/epg/channels');
+       const data=await r.json();
+       const entry=data.entries.find(x=>x.id==='sp');
+       if(!entry) throw new Error('Canal São Paulo não encontrado');
+       const content=entry.contents.find(x=>x.format==='application/dash+xml');
+       if(!content) throw new Error('Manifest DASH não encontrado');
+       shakaPlayer=new shaka.Player(v);
+       shakaPlayer.configure({drm:{servers:{'com.widevine.alpha':content.drm.widevine.licenseUrl}}});
+       await shakaPlayer.load(content.url);
+       p.style.display='none'; v.style.display='block';
+       document.getElementById('playerMsg').textContent='';
+       v.play().catch(()=>{});
+     }catch(e){
+       v.style.display='none'; p.style.display='flex';
+       document.getElementById('playerMsg').textContent='Não foi possível iniciar a transmissão oficial: '+e.message;
+     }
+   }
  } else {
    document.getElementById('playerMsg').textContent='Canal ainda em preparação.';
    document.getElementById('status').textContent='Canal ainda em preparação.';
@@ -77,7 +91,7 @@ function openChannel(name){
 }
 function openOfficialChannel(){window.location.href=channels[current];}
 function reloadPlayer(){if(current)openChannel(current)}
-function stopPlayer(){const v=document.getElementById('liveVideo');if(hlsPlayer){hlsPlayer.destroy();hlsPlayer=null}v.pause();v.removeAttribute('src');v.load();v.style.display='none';document.getElementById('officialOpen').style.display='none';document.getElementById('placeholder').style.display='flex';current='';document.getElementById('playerTitle').textContent='TV Online Freire';document.getElementById('playerMsg').textContent='Selecione um canal para iniciar a transmissão.';document.getElementById('status').textContent='Nenhum canal selecionado'}
+function stopPlayer(){const v=document.getElementById('liveVideo');if(hlsPlayer){hlsPlayer.destroy();hlsPlayer=null}if(shakaPlayer){shakaPlayer.destroy();shakaPlayer=null}v.pause();v.removeAttribute('src');v.load();v.style.display='none';document.getElementById('officialOpen').style.display='none';document.getElementById('placeholder').style.display='flex';current='';document.getElementById('playerTitle').textContent='TV Online Freire';document.getElementById('playerMsg').textContent='Selecione um canal para iniciar a transmissão.';document.getElementById('status').textContent='Nenhum canal selecionado'}
 function fullscreen(){document.querySelector('.player').requestFullscreen?.()}
 </script>
 </body>
