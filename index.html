@@ -25,7 +25,7 @@ h2{font-size:18px;margin:24px 0 12px}.channels{display:grid;grid-template-column
 <div class="screen" id="screen"><video id="liveVideo" controls playsinline autoplay muted></video><div class="tvmsg" id="placeholder"><div class="live"><i></i> AO VIVO</div><strong id="playerTitle">TV Online Freire</strong><span id="playerMsg">Selecione um canal para iniciar a transmissão.</span><button id="officialOpen" onclick="openOfficialChannel()" style="display:none;margin-top:8px">▶ Assistir ao vivo</button></div></div>
 <div class="controls"><button onclick="fullscreen()">⛶ Tela cheia</button><button class="secondary" onclick="reloadPlayer()">↻ Recarregar</button><button class="secondary" onclick="stopPlayer()">■ Parar</button></div>
 </section>
-<div class="status" id="status">TV Online Freire • V2.8 — Record oficial</div>
+<div class="status" id="status">TV Online Freire • V3.0 — teste GitHub Pages</div>
 <h2>Canais</h2>
 <section class="channels">
 <div class="channel" onclick="openChannel('Globo')"><div class="badge">G</div><b>Globo</b><small>TV Globo • Globoplay</small></div>
@@ -89,7 +89,7 @@ async function openChannel(name){
    document.getElementById('status').textContent='Canal ainda em preparação.';
  }
 }
-function openOfficialChannel(){window.location.href=channels[current];}
+function openOfficialChannel(){if(current==='Record')return;if(current)window.location.href=channels[current];}
 function reloadPlayer(){if(current)openChannel(current)}
 function stopPlayer(){const v=document.getElementById('liveVideo');if(hlsPlayer){hlsPlayer.destroy();hlsPlayer=null}if(shakaPlayer){shakaPlayer.destroy();shakaPlayer=null}v.pause();v.removeAttribute('src');v.load();v.style.display='none';document.getElementById('officialOpen').style.display='none';document.getElementById('placeholder').style.display='flex';current='';document.getElementById('playerTitle').textContent='TV Online Freire';document.getElementById('playerMsg').textContent='Selecione um canal para iniciar a transmissão.';document.getElementById('status').textContent='Nenhum canal selecionado'}
 function fullscreen(){document.querySelector('.player').requestFullscreen?.()}
