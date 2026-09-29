@@ -1,12 +1,58 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TV Online</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0b63ce">
+<title>TV Online Freire</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f7fa;color:#17202a}
+header{background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:10}
+.top{max-width:1100px;margin:auto;padding:14px 18px;display:flex;align-items:center;gap:12px}
+.logo{width:44px;height:44px;border:3px solid #0b63ce;border-radius:50%;display:grid;place-items:center;color:#0b63ce;font-weight:900;font-size:23px}
+h1{font-size:20px;margin:0}.sub{font-size:12px;color:#6b7280;margin-top:3px}
+main{max-width:1100px;margin:auto;padding:18px}.player{background:#111;border-radius:14px;overflow:hidden;box-shadow:0 5px 18px #0002}
+.screen{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;color:#fff;text-align:center;padding:25px}
+.screen strong{display:block;font-size:22px;margin-bottom:8px}.screen span{color:#bbb;font-size:14px}
+.controls{display:flex;gap:8px;padding:10px;background:#191919;flex-wrap:wrap}
+button{border:0;border-radius:9px;padding:11px 15px;background:#0b63ce;color:#fff;font-weight:700;cursor:pointer}
+button.secondary{background:#fff;color:#17202a;border:1px solid #d8dde5}
+button:active{transform:scale(.98)}
+h2{font-size:18px;margin:24px 0 12px}.channels{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.channel{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:15px;text-align:left;cursor:pointer;box-shadow:0 2px 7px #0000000b}
+.channel:hover{border-color:#0b63ce}.badge{width:42px;height:42px;border-radius:10px;background:#eef5ff;color:#0b63ce;display:grid;place-items:center;font-weight:900;margin-bottom:10px}
+.channel b{display:block}.channel small{color:#6b7280}.status{margin-top:14px;font-size:12px;color:#667085}
+@media(max-width:600px){main{padding:12px}.top{padding:11px 12px}.screen strong{font-size:18px}}
+</style>
 </head>
 <body>
-  <h1>TV Online</h1>
-  <p>Atualização automática funcionando!</p>
+<header><div class="top"><div class="logo">F</div><div><h1>TV Online Freire</h1><div class="sub">Televisão online em um único aplicativo</div></div></div></header>
+<main>
+<section class="player">
+  <div class="screen" id="screen"><div><strong>Selecione um canal</strong><span>O player será iniciado quando uma transmissão configurada for selecionada.</span></div></div>
+  <div class="controls">
+    <button onclick="fullscreen()">Tela cheia</button>
+    <button class="secondary" onclick="reloadPlayer()">Recarregar</button>
+  </div>
+</section>
+<div class="status" id="status">TV Online Freire • V1.0</div>
+<h2>Canais</h2>
+<section class="channels">
+  <div class="channel" onclick="selectChannel('Globo')"><div class="badge">G</div><b>Globo</b><small>Transmissão</small></div>
+  <div class="channel" onclick="selectChannel('Record')"><div class="badge">R</div><b>Record</b><small>Transmissão</small></div>
+  <div class="channel" onclick="selectChannel('Band')"><div class="badge">B</div><b>Band</b><small>Transmissão</small></div>
+  <div class="channel" onclick="selectChannel('SBT')"><div class="badge">S</div><b>SBT</b><small>Transmissão</small></div>
+</section>
+</main>
+<script>
+let current='';
+function selectChannel(name){
+ current=name;
+ document.getElementById('screen').innerHTML='<div><strong>'+name+'</strong><span>Canal selecionado. A fonte oficial de transmissão ainda precisa ser configurada para este canal.</span></div>';
+ document.getElementById('status').textContent='Canal selecionado: '+name+' • TV Online Freire V1.0';
+}
+function reloadPlayer(){if(current)selectChannel(current)}
+function fullscreen(){document.querySelector('.player').requestFullscreen?.()}
+</script>
 </body>
 </html>
