@@ -77,10 +77,17 @@ async function openChannel(name){
     return;
   }
   if(name==='SBT'){
-    setMsg('Abrindo a transmissão oficial do SBT Ao Vivo...');
-    b.textContent='▶ Assistir SBT ao vivo';
-    b.style.display='inline-block';
-    setStatus('SBT • transmissão oficial');
+    setMsg('Carregando o player oficial do SBT Ao Vivo...');
+    b.style.display='none';
+    const iframe=document.createElement('iframe');
+    iframe.src='https://www.youtube.com/embed/ABVQXgr2LW4?autoplay=1&mute=0&playsinline=1';
+    iframe.title='SBT Ao Vivo';
+    iframe.allow='autoplay; encrypted-media; picture-in-picture';
+    iframe.allowFullscreen=true;
+    iframe.style.cssText='width:100%;height:100%;border:0;display:block;background:#000';
+    document.getElementById('screen').appendChild(iframe);
+    document.getElementById('placeholder').style.display='none';
+    setStatus('SBT • player oficial incorporado');
     return;
   }
   if(name!=='Record' && name!=='SBT'){
