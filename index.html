@@ -71,8 +71,8 @@ async function openChannel(name){
        const data=await r.json();
        const entry=data.entries.find(x=>x.id==='sp');
        if(!entry) throw new Error('Canal São Paulo não encontrado');
-       const content=entry.contents.find(x=>x.format==='application/dash+xml');
-       if(!content) throw new Error('Manifest DASH não encontrado');
+       const content=entry.contents.find(x=>{const fmt=String(x.format||x.mimeType||x.type||'').toLowerCase(); return fmt.includes('dash') && x.url;}) || entry.contents.find(x=>x.url && x.drm && x.drm.widevine);
+       if(!content) throw new Error('Manifest oficial não encontrado na API da Record');
        shakaPlayer=new shaka.Player(v);
        shakaPlayer.configure({drm:{servers:{'com.widevine.alpha':content.drm.widevine.licenseUrl}}});
        await shakaPlayer.load(content.url);
