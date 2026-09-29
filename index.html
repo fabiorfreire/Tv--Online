@@ -57,9 +57,19 @@ function openChannel(name){
    b.textContent='▶ Assistir Globo ao vivo'; b.style.display='inline-block';
    document.getElementById('status').textContent='Globo • transmissão oficial';
  } else if(name==='Record'){
-   document.getElementById('playerMsg').textContent='Transmissão oficial da Record Paulista pelo RecordPlus';
+   document.getElementById('playerMsg').textContent='Carregando a página oficial da Record Paulista dentro do aplicativo...';
    b.textContent='▶ Abrir Record Paulista ao vivo'; b.style.display='inline-block';
-   document.getElementById('status').textContent='Record Paulista • transmissão oficial • RecordPlus';
+   document.getElementById('status').textContent='Record Paulista • teste de exibição na tela';
+   const oldFrame=document.getElementById('officialFrame');
+   if(oldFrame) oldFrame.remove();
+   const f=document.createElement('iframe');
+   f.id='officialFrame';
+   f.src=channels.Record;
+   f.title='Record Paulista ao vivo';
+   f.allow='autoplay; fullscreen; picture-in-picture';
+   f.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;z-index:5;';
+   document.querySelector('.screen').appendChild(f);
+   p.style.display='none';
  } else {
    document.getElementById('playerMsg').textContent='Canal ainda em preparação.';
    document.getElementById('status').textContent='Canal ainda em preparação.';
