@@ -71,11 +71,9 @@ async function openChannel(name){
     return;
   }
   if(name==='Record'){
-    setMsg('Abrindo a transmissão oficial da Record Paulista no RecordPlus...');
-    b.textContent='▶ Assistir Record Paulista ao vivo';
-    b.style.display='inline-block';
-    setStatus('Record Paulista • RecordPlus oficial');
-    return;
+    setMsg('Consultando o sinal oficial do RecordPlus...');
+    b.style.display='none';
+    setStatus('Record Paulista • sinal oficial');
   }
   if(name==='SBT'){
     setMsg('Carregando o player oficial do SBT Ao Vivo...');
@@ -143,10 +141,7 @@ async function openChannel(name){
 }
 
 function openOfficialChannel(){
-  if(current==='Record'){
-    window.location.href='https://descubra.recordplus.com/';
-    return;
-  }
+  
   if(current==='SBT'){
     return;
   }
