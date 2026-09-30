@@ -154,19 +154,15 @@ async function openChannel(name){
     return;
   }
   if(name==='RedeTV'){
-    const url='https://www.redetv.uol.com.br/aovivo/';
-    // RedeTV: não incorporar a página completa. Mostrar somente uma tela
-    // própria do TV Online Freire e permitir acesso ao player oficial.
+    // RedeTV: não abrir o site externo. A emissora não expõe atualmente
+    // um HLS público estável que possamos incorporar diretamente.
     p.style.display='flex';
-    b.textContent='▶ ABRIR REDETV! AO VIVO';
-    b.onclick=()=>window.open(url,'_blank','noopener,noreferrer');
-    b.style.display='inline-block';
+    b.style.display='none';
     document.getElementById('playerTitle').textContent='RedeTV!';
-    setMsg('Toque no botão abaixo para assistir à transmissão oficial.');
-    setStatus('RedeTV! • acesso ao player oficial');
+    setMsg('Transmissão direta da RedeTV! indisponível no momento.');
+    setStatus('RedeTV! • sinal direto indisponível');
     return;
   }
-
   if(name==='Gazeta'){
     const url='https://www.tvgazeta.com.br/aovivo/';
     setMsg('Carregando a transmissão oficial...');
