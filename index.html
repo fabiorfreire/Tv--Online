@@ -189,21 +189,36 @@ async function openChannel(name){
     return;
   }
   if(name==='RedeTV'){
-    setMsg('Carregando a transmissão oficial da RedeTV!...');
+    setMsg('Carregando o sinal ao vivo da RedeTV!...');
     b.style.display='none';
     const screen=document.getElementById('screen');
-    const oldFrame=document.getElementById('externalFrame');
-    if(oldFrame) oldFrame.remove();
-    const iframe=document.createElement('iframe');
-    iframe.id='externalFrame';
-    iframe.src='https://geo.dailymotion.com/player/xgrus.html?video=kYe5OYErhldJ75Azib2';
-    iframe.title='RedeTV! Ao Vivo';
-    iframe.allow='autoplay; fullscreen; picture-in-picture';
-    iframe.allowFullscreen=true;
-    iframe.style.cssText='width:100%;height:min(62vw,560px);min-height:260px;border:0;display:block;background:#000';
-    screen.appendChild(iframe);
+    const video=document.getElementById('liveVideo');
+    video.style.display='block';
+    video.muted=true;
+    const stream='https://hls.brasilstream.com.br/live/redetv/redetv/playlist.m3u8';
+    try{
+      if(shakaPlayer){try{await shakaPlayer.destroy()}catch(e){} shakaPlayer=null}
+      shaka.polyfill.installAll();
+      const player=new shaka.Player(video);
+      shakaPlayer=player;
+      player.addEventListener('error',e=>setStatus('RedeTV! • erro no sinal ao vivo'));
+      await player.load(stream);
+      setStatus('RedeTV! • sinal ao vivo carregado');
+      video.play().catch(()=>{});
+    }catch(e){
+      video.style.display='none';
+      const iframe=document.createElement('iframe');
+      iframe.id='externalFrame';
+      iframe.src='https://geo.dailymotion.com/player/xgrus.html?video=kYe5OYErhldJ75Azib2';
+      iframe.title='RedeTV! Ao Vivo';
+      iframe.allow='autoplay; fullscreen; picture-in-picture';
+      iframe.allowFullscreen=true;
+      iframe.style.cssText='width:100%;height:min(62vw,560px);min-height:260px;border:0;display:block;background:#000';
+      screen.appendChild(iframe);
+      p.style.display='none';
+      setStatus('RedeTV! • player alternativo');
+    }
     p.style.display='none';
-    setStatus('RedeTV! • Player do projeto antigo');
     return;
   }
 
