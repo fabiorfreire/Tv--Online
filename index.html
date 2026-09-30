@@ -153,34 +153,54 @@ async function openChannel(name){
     setStatus(labels[name]);
     return;
   }
-  if(name==='RedeTV' || name==='Gazeta'){
-    const url=name==='RedeTV' ? 'https://www.redetv.uol.com.br/aovivo/' : 'https://www.tvgazeta.com.br/aovivo/';
+  if(name==='RedeTV'){
+    const url='https://www.redetv.uol.com.br/aovivo/';
+    setMsg('Abrindo o player oficial da RedeTV!...');
+    b.style.display='none';
+    const screen=document.getElementById('screen');
+
+    // O endereço /aovivo/ é a página oficial que contém o player.
+    // A RedeTV! não fornece neste projeto uma URL HLS pública estável
+    // para reproduzir diretamente em <video>. Mantemos o player oficial.
+    const iframe=document.createElement('iframe');
+    iframe.className='redetv-player';
+    iframe.src=url;
+    iframe.title='RedeTV! Ao Vivo';
+    iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
+    iframe.allowFullscreen=true;
+    iframe.referrerPolicy='strict-origin-when-cross-origin';
+    iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000';
+    screen.appendChild(iframe);
+    p.style.display='none';
+    setStatus('RedeTV! • player oficial incorporado');
+
+    // Se a página não disponibilizar o vídeo dentro do iframe, oferecer
+    // abertura direta da página oficial, sem interferir nos outros canais.
+    setTimeout(()=>{
+      if(current!=='RedeTV') return;
+      b.textContent='▶ Abrir RedeTV! ao vivo';
+      b.onclick=()=>window.open(url,'_blank','noopener,noreferrer');
+      b.style.display='inline-block';
+      setMsg('Player oficial carregado. Se o vídeo não aparecer, abra a RedeTV! diretamente.');
+    },4500);
+    return;
+  }
+
+  if(name==='Gazeta'){
+    const url='https://www.tvgazeta.com.br/aovivo/';
     setMsg('Carregando a transmissão oficial...');
     b.style.display='none';
     const screen=document.getElementById('screen');
     const iframe=document.createElement('iframe');
-    iframe.className=name.toLowerCase()+'-player';
+    iframe.className='gazeta-player';
     iframe.src=url;
-    iframe.title=name==='RedeTV' ? 'RedeTV! Ao Vivo' : 'TV Gazeta Ao Vivo';
+    iframe.title='TV Gazeta Ao Vivo';
     iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
     iframe.allowFullscreen=true;
     iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000';
     screen.appendChild(iframe);
     p.style.display='none';
-    setStatus(name==='RedeTV' ? 'RedeTV! • transmissão oficial incorporada' : 'TV Gazeta • transmissão oficial incorporada');
-
-    // A RedeTV! pode impedir iframe dependendo do navegador/política do site.
-    // Após alguns segundos, oferecemos o player oficial sem alterar os demais canais.
-    if(name==='RedeTV'){
-      setTimeout(()=>{
-        if(current!=='RedeTV') return;
-        b.textContent='▶ Abrir RedeTV! ao vivo';
-        b.onclick=()=>window.open(url,'_blank','noopener,noreferrer');
-        b.style.display='inline-block';
-        setMsg('Se o player não aparecer, abra a transmissão oficial da RedeTV!.');
-        setStatus('RedeTV! • player oficial — opção de abertura direta disponível');
-      },4500);
-    }
+    setStatus('TV Gazeta • transmissão oficial incorporada');
     return;
   }
   if(name!=='Record' && name!=='SBT'){
