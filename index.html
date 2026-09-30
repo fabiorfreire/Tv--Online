@@ -51,7 +51,7 @@ const channels={
 Globo:'https://globoplay.globo.com/tv-globo/ao-vivo/7832875/',
 Record:'https://record.r7.com/record-emissoras/sudeste/record-paulista/',
 Band:'https://www.band.com.br/ao-vivo',
-SBT:'https://www.sbt.com.br/ao-vivo',
+SBT:'https://youtube-player.sbtlab.io/?videoID=R0ZJ4uevOd4&t=0&adunit=%2F1011235%2Fsbt%2Fhome%2Fao-vivo&iu=%2F1011235%2Fsbt%2Fhome%2Fao-vivo&env=vp&gdfp_req=1&output=vast&sz=1280x720&vid=R0ZJ4uevOd4&vpa=auto&vpmute=1&hl=pt&plcmt=1&vcomp=2&cust_params=conteudo%3Dao-vivo%26tema%3Dsbt-live%26tipo%3Dlive',
 RedeTV:'https://www.redetv.uol.com.br/aovivo/',
 Gazeta:'https://geo.dailymotion.com/player/xb2fp.html?video=x9xwtpy'
 };
@@ -108,14 +108,15 @@ async function openChannel(name){
     setMsg('Carregando o player oficial do SBT Ao Vivo...');
     b.style.display='none';
     const screen=document.getElementById('screen');
-    const old=screen.querySelector('.sbt-player'); if(old) old.remove();
+    const oldFrame=document.getElementById('externalFrame');
+    if(oldFrame) oldFrame.remove();
     const iframe=document.createElement('iframe');
-    iframe.className='sbt-player';
-    iframe.src='https://www.sbt.com.br/ao-vivo';
+    iframe.id='externalFrame';
+    iframe.src='https://youtube-player.sbtlab.io/?videoID=R0ZJ4uevOd4&t=0&adunit=%2F1011235%2Fsbt%2Fhome%2Fao-vivo&iu=%2F1011235%2Fsbt%2Fhome%2Fao-vivo&env=vp&gdfp_req=1&output=vast&sz=1280x720&vid=R0ZJ4uevOd4&vpa=auto&vpmute=1&hl=pt&plcmt=1&vcomp=2&cust_params=conteudo%3Dao-vivo%26tema%3Dsbt-live%26tipo%3Dlive';
     iframe.title='SBT Ao Vivo';
-    iframe.allow='autoplay; encrypted-media; picture-in-picture';
+    iframe.allow='autoplay; fullscreen; picture-in-picture';
     iframe.allowFullscreen=true;
-    iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000';
+    iframe.style.cssText='width:100%;height:min(62vw,560px);min-height:260px;border:0;display:block;background:#000';
     screen.appendChild(iframe);
     p.style.display='none';
     setStatus('SBT • player oficial incorporado');
