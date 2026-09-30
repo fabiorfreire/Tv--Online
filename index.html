@@ -1,263 +1,41 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#0b63ce">
-<title>TV Online Freire</title>
-<style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f7fa;color:#17202a}
-header{background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:10}.top{max-width:1100px;margin:auto;padding:14px 18px;display:flex;align-items:center;gap:12px}
-.logo{width:44px;height:44px;border:3px solid #0b63ce;border-radius:50%;display:grid;place-items:center;color:#0b63ce;font-weight:900;font-size:23px}h1{font-size:20px;margin:0}.sub{font-size:12px;color:#6b7280;margin-top:3px}
-main{max-width:1100px;margin:auto;padding:18px}.player{background:#111;border-radius:14px;overflow:hidden;box-shadow:0 5px 18px #0002}.screen{aspect-ratio:16/9;display:flex;min-height:0;align-items:center;justify-content:center;color:#fff;text-align:center;padding:25px}
-.screen strong{display:block;font-size:22px;margin-bottom:8px}.screen span{color:#bbb;font-size:14px}.controls{display:flex;gap:8px;padding:10px;background:#191919;flex-wrap:wrap}
-button{border:0;border-radius:9px;padding:11px 15px;background:#0b63ce;color:#fff;font-weight:700;cursor:pointer}button.secondary{background:#fff;color:#17202a;border:1px solid #d8dde5}button:active{transform:scale(.98)}
-h2{font-size:18px;margin:24px 0 12px}.channels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.channel{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:15px;cursor:pointer;box-shadow:0 2px 7px #0000000b}
-.channel:hover{border-color:#0b63ce}.badge{width:42px;height:42px;border-radius:10px;background:#eef5ff;color:#0b63ce;display:grid;place-items:center;font-weight:900;margin-bottom:10px}.channel b{display:block}.channel small{color:#6b7280}.status{margin-top:14px;font-size:12px;color:#667085}
-.channel{padding:10px;min-height:92px}.badge{width:34px;height:34px;border-radius:8px;margin-bottom:6px;font-size:14px}.channel b{font-size:14px}.channel small{font-size:10px}
-@media(max-width:600px){main{padding:8px}.top{padding:10px 12px}.screen strong{font-size:18px}.screen{border-radius:10px;aspect-ratio:16/9}.controls{padding:8px;gap:6px}.controls button{flex:1;min-width:0;padding:11px 6px;font-size:13px;white-space:nowrap}.channels{grid-template-columns:repeat(3,minmax(0,1fr)) !important;gap:6px !important}.channel{padding:7px !important;min-height:74px !important}.badge{width:30px;height:30px;border-radius:7px;margin-bottom:4px;font-size:12px}.channel b{font-size:12px}.channel small{font-size:9px}}
-.screen iframe{width:100%;height:100%;border:0;background:#000;display:block}.screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;display:none}.screen{position:relative;background:radial-gradient(circle at center,#263241 0,#0b0f14 60%,#050608 100%);min-height:0;overflow:hidden}.screen .tvmsg{display:flex}.screen iframe{display:none}.tvmsg{display:flex;flex-direction:column;align-items:center;gap:10px}.tvmsg strong{font-size:26px;text-shadow:0 2px 10px #000}.live{font-size:11px;font-weight:800;letter-spacing:.8px;background:#d62828;color:#fff;padding:5px 9px;border-radius:20px}.live i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#fff;margin-right:5px}.player{position:relative}.player:after{content:"TV ONLINE";position:absolute;top:9px;right:10px;color:#ffffffaa;font-size:10px;font-weight:700;letter-spacing:1px;pointer-events:none}
-</style>
-<!-- V3.1 Record: API oficial atual + HLS -->
-</head>
-<body>
-<header><div class="top"><div class="logo">F</div><div><h1>TV Online Freire</h1><div class="sub">Acesso às transmissões oficiais</div></div></div></header>
-<main>
-<section class="player">
-<div class="screen" id="screen"><video id="liveVideo" controls playsinline autoplay muted></video><div class="tvmsg" id="placeholder"><div class="live"><i></i> AO VIVO</div><strong id="playerTitle">TV Online Freire</strong><span id="playerMsg">Selecione um canal para iniciar a transmissão.</span><button id="officialOpen" onclick="openOfficialChannel()" style="display:none;margin-top:8px">▶ Assistir ao vivo</button></div></div>
-<div class="controls"><button onclick="fullscreen()">⛶ Tela cheia</button><button class="secondary" onclick="reloadPlayer()">↻ Recarregar</button><button class="secondary" onclick="stopPlayer()">■ Parar</button></div>
-</section>
-<div class="status" id="status">TV Online Freire • V3.4 — 12 canais</div>
-<h2>Canais</h2>
-<section class="channels">
-<div class="channel" onclick="openChannel('TVBrasil')"><div class="badge">TB</div><b>TV Brasil</b><small>Ao Vivo</small></div>
-<div class="channel" onclick="openChannel('Cultura')"><div class="badge">C</div><b>TV Cultura</b><small>Ao Vivo</small></div>
-<div class="channel" onclick="openChannel('SBT')"><div class="badge">S</div><b>SBT SP</b><small>SBT • Ao Vivo</small></div>
-<div class="channel" onclick="openChannel('Globo')"><div class="badge">G</div><b>Globo SP</b><small>Globoplay</small></div>
-<div class="channel" onclick="openChannel('Record')"><div class="badge">R</div><b>Record SP</b><small>RecordPlus</small></div>
-<div class="channel" onclick="openChannel('Band')"><div class="badge">B</div><b>Band SP</b><small>Ao Vivo</small></div>
-<div class="channel" onclick="openChannel('RedeTV')"><div class="badge">R</div><b>RedeTV!</b><small>Ao Vivo</small></div>
-<div class="channel" onclick="openChannel('Gazeta')"><div class="badge">G</div><b>TV Gazeta</b><small>Ao Vivo</small></div>
-<div class="channel" onclick="openChannel('CazeTV')"><div class="badge">CZ</div><b>CazéTV</b><small>Ao Vivo</small></div>
-<div class="channel" onclick="openChannel('Justica')"><div class="badge">J</div><b>TV Justiça</b><small>Ao Vivo</small></div>
-<div class="channel" onclick="openChannel('RedeVida')"><div class="badge">RV</div><b>REDEVIDA</b><small>Ao Vivo</small></div>
-<div class="channel" onclick="openChannel('GeTV')"><div class="badge">GE</div><b>GE TV</b><small>Ao Vivo</small></div>
-</section>
-
-</main>
-<script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.12/dist/shaka-player.compiled.min.js"></script><script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
-<script>
-const channels={
-Globo:'https://globoplay.globo.com/tv-globo/ao-vivo/7832875/',
-Record:'https://record.r7.com/record-emissoras/sudeste/record-paulista/',
-Band:'https://www.band.com.br/ao-vivo',
-SBT:'https://www.sbt.com.br/ao-vivo',
-RedeTV:'https://www.redetv.uol.com.br/aovivo/',
-Gazeta:'https://www.tvgazeta.com.br/aovivo/'
-};
-let current=''; let shakaPlayer=null;
-
-function setMsg(t){document.getElementById('playerMsg').textContent=t}
-
-function setStatus(t){document.getElementById('status').textContent=t}
-
-async function destroyPlayer(){
-  document.querySelectorAll('#screen iframe').forEach(el=>el.remove());
-  if(shakaPlayer){try{await shakaPlayer.destroy()}catch(e){} shakaPlayer=null}
-  const v=document.getElementById('liveVideo');
-  v.pause();v.removeAttribute('src');v.load();v.style.display='none';
-}
-
-async function openChannel(name){
-  current=name;
-  const v=document.getElementById('liveVideo');
-  const p=document.getElementById('placeholder');
-  const b=document.getElementById('officialOpen');
-  await destroyPlayer();
-  v.style.display='none';p.style.display='flex';b.style.display='none';
-  document.getElementById('playerTitle').textContent=name;
-  setMsg('');
-  if(name==='Globo'){
-    setMsg('Transmissão oficial pelo Globoplay');
-    b.textContent='▶ Assistir Globo ao vivo';b.style.display='inline-block';
-    setStatus('Globo • transmissão oficial');
-    return;
-  }
-  if(name==='Record'){
-    setMsg('Consultando o sinal oficial do RecordPlus...');
-    b.style.display='none';
-    setStatus('Record Paulista • sinal oficial');
-  }
-  if(name==='Band'){
-    setMsg('Carregando o player oficial da Band Ao Vivo...');
-    b.style.display='none';
-    const screen=document.getElementById('screen');
-    const iframe=document.createElement('iframe');
-    iframe.className='band-player';
-    iframe.src='https://beyond.spalla.io/player/?autoplay=1&live=019a797e-eeb8-7eda-9518-132403ccb160&muted=1';
-    iframe.title='Band Ao Vivo';
-    iframe.allow='autoplay; fullscreen; picture-in-picture; encrypted-media';
-    iframe.allowFullscreen=true;
-    iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000';
-    screen.appendChild(iframe);
-    p.style.display='none';
-    setStatus('Band • player oficial incorporado');
-    return;
-  }
-  if(name==='SBT'){
-    setMsg('Carregando o player oficial do SBT Ao Vivo...');
-    b.style.display='none';
-    const screen=document.getElementById('screen');
-    const old=screen.querySelector('.sbt-player'); if(old) old.remove();
-    const iframe=document.createElement('iframe');
-    iframe.className='sbt-player';
-    iframe.src='https://www.sbt.com.br/ao-vivo';
-    iframe.title='SBT Ao Vivo';
-    iframe.allow='autoplay; encrypted-media; picture-in-picture';
-    iframe.allowFullscreen=true;
-    iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000';
-    screen.appendChild(iframe);
-    p.style.display='none';
-    setStatus('SBT • player oficial incorporado');
-    return;
-  }
-  if(name==='Justica'){
-    setMsg('Carregando a transmissão da TV Justiça...');
-    b.style.display='none';
-    const screen=document.getElementById('screen');
-    const old=screen.querySelector('.justica-player'); if(old) old.remove();
-    const video=document.getElementById('liveVideo');
-    if(window.Hls && Hls.isSupported()){
-      const hls=new Hls({enableWorker:true,lowLatencyMode:false,maxBufferLength:30});
-      window.justicaHls=hls;
-      hls.loadSource('https://ythls.onrender.com/channel/UC0qlZ5jxxueKNzUERcrllNw.m3u8');
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED,()=>{p.style.display='none';video.style.display='block';video.play().catch(()=>{});setStatus('TV Justiça • transmissão ao vivo');});
-      hls.on(Hls.Events.ERROR,(e,d)=>{if(d.fatal){setMsg('A transmissão da TV Justiça está temporariamente indisponível.');setStatus('TV Justiça • aguardando sinal ao vivo');}});
-    }else if(video.canPlayType('application/vnd.apple.mpegurl')){
-      video.src='https://ythls.onrender.com/channel/UC0qlZ5jxxueKNzUERcrllNw.m3u8';
-      video.onloadedmetadata=()=>{p.style.display='none';video.style.display='block';video.play().catch(()=>{});setStatus('TV Justiça • transmissão ao vivo');};
-    }else{
-      setMsg('Navegador sem suporte à transmissão ao vivo.');
-      setStatus('TV Justiça • navegador sem suporte');
-    }
-    return;
-  }
-  if(name==='TVBrasil' || name==='Cultura' || name==='CazeTV' || name==='Justica' || name==='RedeVida' || name==='GeTV'){
-    const urls={
-      TVBrasil:'https://tvbrasil.ebc.com.br/webtv/',
-      Cultura:'https://culturaplay.tvcultura.com.br/channels/14/embed',
-      CazeTV:'https://cazetv.com/',
-      Justica:'https://ythls.onrender.com/channel/UC0qlZ5jxxueKNzUERcrllNw.m3u8',
-      RedeVida:'https://redevida.com.br/ao-vivo/',
-      GeTV:'https://ge.globo.com/getv/'
-    };
-    const labels={
-      TVBrasil:'TV Brasil • transmissão oficial',
-      Cultura:'TV Cultura • transmissão oficial',
-      CazeTV:'CazéTV • transmissão oficial',
-      Justica:'TV Justiça • transmissão oficial',
-      RedeVida:'REDEVIDA • transmissão oficial',
-      GeTV:'GE TV • transmissão oficial'
-    };
-    setMsg('Carregando a transmissão oficial...');
-    b.style.display='none';
-    const screen=document.getElementById('screen');
-    const iframe=document.createElement('iframe');
-    iframe.className='extra-player';
-    iframe.src=urls[name];
-    iframe.title=labels[name];
-    iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
-    iframe.allowFullscreen=true;
-    iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000';
-    screen.appendChild(iframe);
-    p.style.display='none';
-    setStatus(labels[name]);
-    return;
-  }
-  if(name==='RedeTV' || name==='Gazeta'){
-    const url=name==='RedeTV' ? 'https://www.redetv.uol.com.br/aovivo/' : 'https://www.tvgazeta.com.br/aovivo/';
-    setMsg('Carregando a transmissão oficial...');
-    b.style.display='none';
-    const screen=document.getElementById('screen');
-    const iframe=document.createElement('iframe');
-    iframe.className=name.toLowerCase()+'-player';
-    iframe.src=url;
-    iframe.title=name==='RedeTV' ? 'RedeTV! Ao Vivo' : 'TV Gazeta Ao Vivo';
-    iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
-    iframe.allowFullscreen=true;
-    iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000';
-    screen.appendChild(iframe);
-    p.style.display='none';
-    setStatus(name==='RedeTV' ? 'RedeTV! • transmissão oficial incorporada' : 'TV Gazeta • transmissão oficial incorporada');
-    return;
-  }
-  if(name!=='Record' && name!=='SBT'){
-    setMsg('Canal ainda em preparação.');
-    setStatus('Canal ainda em preparação.');
-    return;
-  }
-
-  setStatus('Record São Paulo • buscando sinal oficial');
-  setMsg('Consultando o sinal oficial do RecordPlus...');
+<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0757c9"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Freire TV"><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/icon.svg"><title>Freire TV Online</title><script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.12/dist/shaka-player.compiled.min.js"></script><script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script><style>*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172033}header{background:linear-gradient(135deg,#0757c9,#0a83ff);color:#fff;padding:18px 16px;position:sticky;top:0;z-index:5}.wrap{max-width:1000px;margin:auto;padding:16px}h1{margin:0;font-size:27px}.sub{margin:5px 0 0;opacity:.92}.player{background:#000;border-radius:16px;overflow:hidden;box-shadow:0 4px 18px #0002;margin-bottom:14px}.player-title{background:#101828;color:#fff;padding:12px 14px;font-weight:700}.player video{width:100%;height:min(62vw,560px);min-height:260px;display:block;background:#000}.channels{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.channel{border:0;border-radius:12px;background:#fff;padding:13px 9px;text-align:left;font-weight:700;color:#172033;box-shadow:0 2px 10px #0001;cursor:pointer}.channel.active{background:#0757c9;color:#fff}.channel small{display:block;font-size:11px;font-weight:400;color:#667085;margin-top:4px}.channel.active small{color:#dbeafe}.region{font-size:13px;color:#475467;margin:0 0 12px}.status{font-size:12px;text-align:center;color:#667085;padding:8px}.notice{font-size:12px;color:#667085;margin:12px 0 0}footer{text-align:center;color:#667085;font-size:12px;padding:20px 0}</style></head><body><header><div class="wrap" style="padding:0"><h1>📺 Freire TV Online</h1><div class="sub">São Paulo • clique no canal para assistir</div></div></header><main class="wrap"><section class="player"><div class="player-title" id="title">TV Brasil — Ao vivo</div><video id="tv" controls autoplay muted playsinline></video></section><div class="status" id="status">● Transmissão carregada</div><div class="region">📍 São Paulo e Grande São Paulo</div><div class="channels" id="channels"></div><p class="notice">Transmissões provenientes de fontes oficiais das emissoras.</p><footer>TV Online</footer></main><script>
+const channels=[
+["TV Brasil","https://aovivo.ebc.com.br/embed-tvbrasil.html","iframe","Transmissão direta"],
+["TV Cultura","https://culturaplay.tvcultura.com.br/channels/14/embed","iframe","Transmissão direta"],
+["SBT SP","https://youtube-player.sbtlab.io/?videoID=R0ZJ4uevOd4&t=0&adunit=%2F1011235%2Fsbt%2Fhome%2Fao-vivo&iu=%2F1011235%2Fsbt%2Fhome%2Fao-vivo&env=vp&gdfp_req=1&output=vast&sz=1280x720&vid=R0ZJ4uevOd4&vpa=auto&vpmute=1&hl=pt&plcmt=1&vcomp=2&cust_params=conteudo%3Dao-vivo%26tema%3Dsbt-live%26tipo%3Dlive","iframe","Player oficial SBT"],
+["Globo SP","https://globoplay.globo.com/tv-globo/ao-vivo/7832875/","iframe","Globoplay oficial"],
+["Record SP","record","record","Player oficial Record São Paulo"],
+["Band SP","https://www.band.com.br/ao-vivo","official","Transmissão oficial Band"],
+["RedeTV! SP","https://geo.dailymotion.com/player/xgrus.html?video=kYe5OYErhldJ75Azib2","iframe","Player oficial RedeTV!"],
+["TV Gazeta","https://geo.dailymotion.com/player/xb2fp.html?video=x9xwtpy","iframe","Player oficial TV Gazeta"],
+["CazéTV","https://www.youtube.com/@CazeTV","iframe","Canal oficial CazéTV no YouTube"],
+["TV Justiça","https://www.youtube.com/embed/XfwDB9udBLw?autoplay=1&mute=1","iframe","TV Justiça — transmissão oficial"],
+["REDEVIDA","https://geo.dailymotion.com/player/x1mmve.html?video=xb1dec2","iframe","Player oficial REDEVIDA"],
+["GE TV","https://www.youtube.com/@getv","iframe","Canal oficial GE TV"]
+];
+const box=document.getElementById("channels"),video=document.getElementById("tv"),title=document.getElementById("title"),status=document.getElementById("status");
+let player=null;
+function showIframe(url,name){video.style.display="none";let old=document.getElementById("externalFrame");if(old)old.remove();const f=document.createElement("iframe");f.id="externalFrame";f.src=url;f.title=name+" ao vivo";f.allow="autoplay; fullscreen; picture-in-picture";f.allowFullscreen=true;f.style.cssText="width:100%;height:min(62vw,560px);min-height:260px;border:0;display:block;background:#000";video.parentNode.appendChild(f);}
+async function loadRecord(){try{video.style.display="block";const old=document.getElementById("externalFrame");if(old)old.remove();if(player){await player.destroy();player=null}const u="https://cdn.jmvstream.com/w/LVW-10842/LVW10842_513N26MDBL/chunklist.m3u8?webview_player=true";if(Hls.isSupported()){const h=new Hls({enableWorker:true,lowLatencyMode:false,backBufferLength:30,maxBufferLength:45,maxBufferSize:60*1000*1000,maxMaxBufferLength:90,manifestLoadingMaxRetry:6,manifestLoadingRetryDelay:1000,manifestLoadingMaxRetryTimeout:10000,levelLoadingMaxRetry:8,levelLoadingRetryDelay:1000,fragLoadingMaxRetry:8,fragLoadingRetryDelay:1000,fragLoadingMaxRetryTimeout:12000});player=h;h.on(Hls.Events.MANIFEST_PARSED,()=>{status.textContent="● Record SP — sinal estabilizado";video.play().catch(()=>{})});h.on(Hls.Events.ERROR,(e,d)=>{if(d.fatal){status.textContent="● Record SP — reconectando sinal...";try{if(d.type===Hls.ErrorTypes.NETWORK_ERROR){h.stopLoad();setTimeout(()=>h.startLoad(),1200)}else if(d.type===Hls.ErrorTypes.MEDIA_ERROR){h.recoverMediaError()}else{h.destroy();setTimeout(()=>loadRecord(),2500)}}catch(_){setTimeout(()=>loadRecord(),3000)}}});h.loadSource(u);h.attachMedia(video)}else if(video.canPlayType("application/vnd.apple.mpegurl")){video.src=u;video.onloadedmetadata=()=>{status.textContent="● Record SP — sinal encontrado";video.play().catch(()=>{})}}else{throw Error("Navegador sem suporte a HLS")}}catch(e){status.textContent="● Não foi possível iniciar a Record: "+e.message;console.error(e)}}
+async function selectChannel(i){const [name,url,mode,desc]=channels[i];[...box.children].forEach((b,n)=>b.classList.toggle("active",n===i));title.textContent=name+" — Ao vivo";if(mode==="record"){await loadRecord();}else if(mode==="official"){window.location.href=url;return;}else{if(player){await player.destroy();player=null}showIframe(url,name);status.textContent="● "+desc}window.scrollTo({top:0,behavior:"smooth"});}
+channels.forEach((c,i)=>{const b=document.createElement("button");b.className="channel"+(i===0?" active":"");b.innerHTML="▶ "+c[0]+"<small>"+c[3]+"</small>";b.onclick=()=>{if(i===3){window.location.href="https://globoplay.globo.com/tv-globo/ao-vivo/7832875/";}else{selectChannel(i);}};box.appendChild(b);});
+async function sendViewerHeartbeat(){
   try{
-    shaka.polyfill.installAll();
-    if(!shaka.Player.isBrowserSupported()) throw new Error('Navegador sem suporte ao player');
-    const r=await fetch('https://api-epg.recordplus.com/v1/epg/channels',{headers:{Accept:'application/json'}});
-    if(!r.ok) throw new Error('API do RecordPlus respondeu HTTP '+r.status);
-    const data=await r.json();
-    const entry=(data.entries||[]).find(x=>x.id==='sp');
-    if(!entry) throw new Error('Canal São Paulo não encontrado na API');
-    const content=(entry.contents||[]).find(x=>{
-      const fmt=String(x.format||x.mimeType||x.type||'').toLowerCase();
-      return !!x.url && (fmt.includes('mpegurl')||fmt.includes('hls'));
+    let id=localStorage.getItem("freire_tv_viewer_id");
+    if(!id){
+      id=(crypto.randomUUID?crypto.randomUUID():Date.now()+"-"+Math.random().toString(36).slice(2));
+      localStorage.setItem("freire_tv_viewer_id",id);
+    }
+    await fetch("/api/viewer-heartbeat",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({session_id:id}),
+      cache:"no-store",
+      keepalive:true
     });
-    if(!content) throw new Error('Sinal HLS oficial não encontrado na API');
-    setMsg('Sinal oficial encontrado. Iniciando o player...');
-    shakaPlayer=new shaka.Player(v);
-    shakaPlayer.configure({
-      streaming:{
-        bufferingGoal:12,
-        rebufferingGoal:3,
-        retryParameters:{maxAttempts:5,baseDelay:800,backoffFactor:1.5,fuzzFactor:0.5,timeout:15000}
-      }
-    });
-    shakaPlayer.addEventListener('error',ev=>{
-      const d=ev.detail||{};
-      console.error('Shaka Record error',d);
-      if(d.severity===2||d.severity===3) setMsg('O sinal oficial encontrou um erro. Toque em Recarregar para tentar novamente.');
-    });
-    await shakaPlayer.load(content.url);
-    p.style.display='none';v.style.display='block';
-    setStatus('Record São Paulo • sinal oficial carregado');
-    v.play().catch(()=>{});
-  }catch(e){
-    console.error(e);
-    await destroyPlayer();
-    p.style.display='flex';
-    setMsg('Não foi possível iniciar a transmissão oficial: '+(e.message||e));
-    setStatus('Record São Paulo • falha ao iniciar o sinal oficial');
-  }
+  }catch(e){}
 }
-
-function openOfficialChannel(){
-  
-  if(current==='SBT'){
-    return;
-  }
-  if(current)window.location.href=channels[current];
-}
-function reloadPlayer(){if(current)openChannel(current)}
-async function stopPlayer(){
-  await destroyPlayer();
-  document.getElementById('officialOpen').style.display='none';
-  document.getElementById('placeholder').style.display='flex';
-  current='';
-  document.getElementById('playerTitle').textContent='TV Online Freire';
-  setMsg('Selecione um canal para iniciar a transmissão.');
-  setStatus('Nenhum canal selecionado');
-}
-function fullscreen(){document.querySelector('.player').requestFullscreen?.()}
-</script>
-</body>
-</html>
+sendViewerHeartbeat();
+setInterval(sendViewerHeartbeat,20000);
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));}
+</script></body></html>
