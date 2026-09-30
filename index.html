@@ -33,9 +33,12 @@ h2{font-size:18px;margin:24px 0 12px}.channels{display:grid;grid-template-column
 <div class="channel" onclick="openChannel('Record')"><div class="badge">R</div><b>Record</b><small>RecordPlus</small></div>
 <div class="channel" onclick="openChannel('Band')"><div class="badge">B</div><b>Band</b><small>Band • Ao Vivo</small></div>
 <div class="channel" onclick="openChannel('SBT')"><div class="badge">S</div><b>SBT</b><small>SBT • Ao Vivo</small></div>
+<div id="moreChannels" style="display:none;grid-column:1/-1;display:none;grid-template-columns:inherit;gap:inherit">
 <div class="channel" onclick="openChannel('RedeTV')"><div class="badge">R</div><b>RedeTV!</b><small>RedeTV! • Ao Vivo</small></div>
 <div class="channel" onclick="openChannel('Gazeta')"><div class="badge">G</div><b>TV Gazeta</b><small>Gazeta • Ao Vivo</small></div>
+</div>
 </section>
+<button id="moreChannelsBtn" class="secondary" onclick="toggleMoreChannels()" style="display:block;margin:14px auto 0">＋ Abrir mais canais</button>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.12/dist/shaka-player.compiled.min.js"></script>
 <script>
@@ -50,6 +53,13 @@ Gazeta:'https://www.tvgazeta.com.br/aovivo/'
 let current=''; let shakaPlayer=null;
 
 function setMsg(t){document.getElementById('playerMsg').textContent=t}
+function toggleMoreChannels(){
+  const box=document.getElementById('moreChannels');
+  const btn=document.getElementById('moreChannelsBtn');
+  const open=box.style.display==='grid';
+  box.style.display=open?'none':'grid';
+  btn.textContent=open?'＋ Abrir mais canais':'− Fechar canais';
+}
 function setStatus(t){document.getElementById('status').textContent=t}
 
 async function destroyPlayer(){
