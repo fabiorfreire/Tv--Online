@@ -155,13 +155,13 @@ async function openChannel(name){
   }
   if(name==='RedeTV'){
     const url='https://www.redetv.uol.com.br/aovivo/';
-    setMsg('Carregando o player oficial da RedeTV!...');
+    setMsg('Carregando a transmissão oficial...');
     b.style.display='none';
     const screen=document.getElementById('screen');
     const old=screen.querySelector('.redetv-player'); if(old) old.remove();
     const iframe=document.createElement('iframe');
     iframe.className='redetv-player';
-    iframe.src=url+'?tvonline=36';
+    iframe.src=url;
     iframe.title='RedeTV! Ao Vivo';
     iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
     iframe.allowFullscreen=true;
