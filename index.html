@@ -121,6 +121,47 @@ async function openChannel(name){
     setStatus('SBT • player oficial incorporado');
     return;
   }
+  if(name==='RedeVida'){
+    setMsg('Carregando a transmissão da REDEVIDA...');
+    b.style.display='none';
+    const screen=document.getElementById('screen');
+    const video=document.createElement('video');
+    video.className='extra-player';
+    video.controls=true;
+    video.autoplay=true;
+    video.muted=true;
+    video.playsInline=true;
+    video.setAttribute('playsinline','');
+    video.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000';
+    screen.appendChild(video);
+    const stream='https://cvd1.cds.ebtcvd.net/live-redevida/smil:redevida.smil/playlist.m3u8';
+    const startHls=()=>{
+      if(window.Hls && window.Hls.isSupported()){
+        const hls=new Hls({enableWorker:true});
+        hls.loadSource(stream);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED,()=>{ video.play().catch(()=>{}); });
+        hls.on(Hls.Events.ERROR,(e,d)=>{
+          if(d.fatal) setMsg('A transmissão da REDEVIDA está temporariamente indisponível.');
+        });
+        video._hls=hls;
+      }else{
+        video.src=stream;
+        video.play().catch(()=>{});
+      }
+    };
+    if(window.Hls) startHls();
+    else{
+      const s=document.createElement('script');
+      s.src='https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js';
+      s.onload=startHls;
+      s.onerror=()=>setMsg('Não foi possível carregar o player da REDEVIDA.');
+      document.head.appendChild(s);
+    }
+    p.style.display='none';
+    setStatus('REDEVIDA • transmissão ao vivo');
+    return;
+  }
   if(name==='TVBrasil' || name==='Cultura' || name==='CazeTV' || name==='Justica' || name==='RedeVida' || name==='GeTV'){
     const urls={
       TVBrasil:'https://tvbrasil.ebc.com.br/webtv/',
