@@ -45,7 +45,7 @@ h2{font-size:18px;margin:24px 0 12px}.channels{display:grid;grid-template-column
 </section>
 
 </main>
-<script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.12/dist/shaka-player.compiled.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.12/dist/shaka-player.compiled.min.js"></script><script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
 <script>
 const channels={
 Globo:'https://globoplay.globo.com/tv-globo/ao-vivo/7832875/',
@@ -121,12 +121,34 @@ async function openChannel(name){
     setStatus('SBT • player oficial incorporado');
     return;
   }
+  if(name==='Justica'){
+    setMsg('Carregando a transmissão da TV Justiça...');
+    b.style.display='none';
+    const screen=document.getElementById('screen');
+    const old=screen.querySelector('.justica-player'); if(old) old.remove();
+    const video=document.getElementById('liveVideo');
+    if(window.Hls && Hls.isSupported()){
+      const hls=new Hls({enableWorker:true,lowLatencyMode:false,maxBufferLength:30});
+      window.justicaHls=hls;
+      hls.loadSource('https://ythls.onrender.com/channel/UC0qlZ5jxxueKNzUERcrllNw.m3u8');
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED,()=>{p.style.display='none';video.style.display='block';video.play().catch(()=>{});setStatus('TV Justiça • transmissão ao vivo');});
+      hls.on(Hls.Events.ERROR,(e,d)=>{if(d.fatal){setMsg('A transmissão da TV Justiça está temporariamente indisponível.');setStatus('TV Justiça • aguardando sinal ao vivo');}});
+    }else if(video.canPlayType('application/vnd.apple.mpegurl')){
+      video.src='https://ythls.onrender.com/channel/UC0qlZ5jxxueKNzUERcrllNw.m3u8';
+      video.onloadedmetadata=()=>{p.style.display='none';video.style.display='block';video.play().catch(()=>{});setStatus('TV Justiça • transmissão ao vivo');};
+    }else{
+      setMsg('Navegador sem suporte à transmissão ao vivo.');
+      setStatus('TV Justiça • navegador sem suporte');
+    }
+    return;
+  }
   if(name==='TVBrasil' || name==='Cultura' || name==='CazeTV' || name==='Justica' || name==='RedeVida' || name==='GeTV'){
     const urls={
       TVBrasil:'https://tvbrasil.ebc.com.br/webtv/',
       Cultura:'https://culturaplay.tvcultura.com.br/channels/14/embed',
       CazeTV:'https://cazetv.com/',
-      Justica:'https://www.youtube-nocookie.com/embed/live_stream?channel=UC0qlZ5jxxueKNzUERcrllNw&autoplay=1&mute=1&rel=0',
+      Justica:'https://ythls.onrender.com/channel/UC0qlZ5jxxueKNzUERcrllNw.m3u8',
       RedeVida:'https://redevida.com.br/ao-vivo/',
       GeTV:'https://ge.globo.com/getv/'
     };
