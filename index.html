@@ -142,51 +142,21 @@ async function openChannel(name){
     return;
   }
   if(name==='Justica'){
-    setMsg('Consultando a transmissão atual da TV Justiça...');
+    setMsg('Carregando a transmissão oficial da TV Justiça...');
     b.style.display='none';
-    try{
-      const publicKey='-----BEGIN PUBLIC KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAi2JlyH5WF2mWmYX/iWCrd62+o8H+RLmhjKn1Gb/uY42X8EAG+KBDlwfGhmCCmjipDx1SDdwcnsdlUC0G6ovwxa7DnNXNvsFBNdW7KoDxRUfp1dIPYhiLicLjZLdeZbCPALZ9f4owbyET3F+olFZZq0oEkg/dPS6avUbn1XAGAdhvSmI5SaulTgeCo9canzOjzCnXSUdkmGSJbWwDGijqSYwpD2b9RZ3rBb1EiIMP5NNXvNAyOvLkNoYlbr0Zda7KSFuroW078+HXGv3k48riVQXRPwhwrhOIjYYmRU+kaWW66Zx7HPPyx3S0wJ6loPGs2Xb4N28iu9MpzpUh0f3JyQIDAQAB-----END PUBLIC KEY-----';
-      const crypt=new JSEncrypt();
-      crypt.setPublicKey(publicKey);
-      const login=await fetch('https://cms-api.stf.jus.br/api/radiotvjustica/login',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          user:crypt.encrypt('cmsapiservice'),
-          password:crypt.encrypt('3af222af56a1dd08e7d9a56ae8c8c9de')
-        })
-      });
-      if(!login.ok) throw new Error('Falha na autenticação do serviço oficial');
-      const auth=await login.json();
-      if(!auth.token) throw new Error('Token oficial não recebido');
-      const live=await fetch('https://cms-api.stf.jus.br/api/radiotvjustica/conteudo/servico/portaltvjusticaassistalink',{
-        headers:{Authorization:'Bearer '+auth.token,Accept:'application/json'}
-      });
-      if(!live.ok) throw new Error('Serviço oficial respondeu HTTP '+live.status);
-      const data=await live.json();
-      const item=(Array.isArray(data)?data:(data.data||data.result||[])).find(x=>String(x.tituloConteudo||'').toLowerCase().includes('tv justiça'));
-      const url=item?.chamada;
-      if(!url) throw new Error('Link atual da TV Justiça não encontrado');
-      const screen=document.getElementById('screen');
-      const old=screen.querySelector('.justica-player'); if(old) old.remove();
-      const iframe=document.createElement('iframe');
-      iframe.className='justica-player';
-      iframe.src=url;
-      iframe.title='TV Justiça — ao vivo';
-      iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
-      iframe.allowFullscreen=true;
-      iframe.frameBorder='0';
-      iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000';
-      screen.appendChild(iframe);
-      p.style.display='none';
-      setStatus('TV Justiça • transmissão oficial atualizada');
-    }catch(e){
-      console.error('TV Justiça',e);
-      await destroyPlayer();
-      p.style.display='flex';
-      setMsg('Não foi possível carregar a transmissão atual da TV Justiça.');
-      setStatus('TV Justiça • falha ao obter sinal oficial');
-    }
+    const screen=document.getElementById('screen');
+    const old=screen.querySelector('.justica-player'); if(old) old.remove();
+    const iframe=document.createElement('iframe');
+    iframe.className='justica-player';
+    iframe.src='https://www.youtube.com/embed/20pNCjFf0-o?autoplay=1&mute=0&rel=0';
+    iframe.title='TV Justiça — Ao vivo';
+    iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
+    iframe.allowFullscreen=true;
+    iframe.frameBorder='0';
+    iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000';
+    screen.appendChild(iframe);
+    p.style.display='none';
+    setStatus('TV Justiça • transmissão oficial STF');
     return;
   }
   if(name==='Cultura' || name==='CazeTV' || name==='Justica' || name==='RedeVida' || name==='GeTV'){
