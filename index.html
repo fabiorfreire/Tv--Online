@@ -168,6 +168,19 @@ async function openChannel(name){
     screen.appendChild(iframe);
     p.style.display='none';
     setStatus(name==='RedeTV' ? 'RedeTV! • transmissão oficial incorporada' : 'TV Gazeta • transmissão oficial incorporada');
+
+    // A RedeTV! pode impedir iframe dependendo do navegador/política do site.
+    // Após alguns segundos, oferecemos o player oficial sem alterar os demais canais.
+    if(name==='RedeTV'){
+      setTimeout(()=>{
+        if(current!=='RedeTV') return;
+        b.textContent='▶ Abrir RedeTV! ao vivo';
+        b.onclick=()=>window.open(url,'_blank','noopener,noreferrer');
+        b.style.display='inline-block';
+        setMsg('Se o player não aparecer, abra a transmissão oficial da RedeTV!.');
+        setStatus('RedeTV! • player oficial — opção de abertura direta disponível');
+      },4500);
+    }
     return;
   }
   if(name!=='Record' && name!=='SBT'){
