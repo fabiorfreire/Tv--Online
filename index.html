@@ -140,6 +140,40 @@ async function openChannel(name){
     setStatus('TV Brasil • player oficial ao vivo');
     return;
   }
+  if(name==='Justica'){
+    setMsg('Carregando a transmissão ao vivo da TV Justiça...');
+    b.style.display='none';
+    try{
+      shaka.polyfill.installAll();
+      if(!shaka.Player.isBrowserSupported()) throw new Error('Navegador sem suporte ao player');
+      const screen=document.getElementById('screen');
+      const url='https://tvjustica-stream.ebc.com.br/index.m3u8';
+      shakaPlayer=new shaka.Player(v);
+      shakaPlayer.configure({
+        streaming:{
+          bufferingGoal:12,
+          rebufferingGoal:3,
+          retryParameters:{maxAttempts:5,baseDelay:800,backoffFactor:1.5,fuzzFactor:0.5,timeout:15000}
+        }
+      });
+      shakaPlayer.addEventListener('error',ev=>{
+        console.error('Shaka TV Justiça error',ev.detail||ev);
+        setMsg('Não foi possível carregar o sinal. Toque em Recarregar para tentar novamente.');
+      });
+      await shakaPlayer.load(url);
+      p.style.display='none';
+      v.style.display='block';
+      setStatus('TV Justiça • transmissão ao vivo');
+      v.play().catch(()=>{});
+    }catch(e){
+      console.error(e);
+      await destroyPlayer();
+      p.style.display='flex';
+      setMsg('Não foi possível iniciar a TV Justiça: '+(e.message||e));
+      setStatus('TV Justiça • falha ao iniciar');
+    }
+    return;
+  }
   if(name==='Cultura' || name==='CazeTV' || name==='Justica' || name==='RedeVida' || name==='GeTV'){
     const urls={
       Cultura:'https://culturaplay.tvcultura.com.br/channels/14/embed',
