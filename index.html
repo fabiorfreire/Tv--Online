@@ -141,37 +141,21 @@ async function openChannel(name){
     return;
   }
   if(name==='Justica'){
-    setMsg('Carregando a transmissão ao vivo da TV Justiça...');
+    setMsg('Carregando a TV Justiça oficial...');
     b.style.display='none';
-    try{
-      shaka.polyfill.installAll();
-      if(!shaka.Player.isBrowserSupported()) throw new Error('Navegador sem suporte ao player');
-      const screen=document.getElementById('screen');
-      const url='https://tvjustica-stream.ebc.com.br/index.m3u8';
-      shakaPlayer=new shaka.Player(v);
-      shakaPlayer.configure({
-        streaming:{
-          bufferingGoal:12,
-          rebufferingGoal:3,
-          retryParameters:{maxAttempts:5,baseDelay:800,backoffFactor:1.5,fuzzFactor:0.5,timeout:15000}
-        }
-      });
-      shakaPlayer.addEventListener('error',ev=>{
-        console.error('Shaka TV Justiça error',ev.detail||ev);
-        setMsg('Não foi possível carregar o sinal. Toque em Recarregar para tentar novamente.');
-      });
-      await shakaPlayer.load(url);
-      p.style.display='none';
-      v.style.display='block';
-      setStatus('TV Justiça • transmissão ao vivo');
-      v.play().catch(()=>{});
-    }catch(e){
-      console.error(e);
-      await destroyPlayer();
-      p.style.display='flex';
-      setMsg('Não foi possível iniciar a TV Justiça: '+(e.message||e));
-      setStatus('TV Justiça • falha ao iniciar');
-    }
+    const screen=document.getElementById('screen');
+    const old=screen.querySelector('.justica-player'); if(old) old.remove();
+    const iframe=document.createElement('iframe');
+    iframe.className='justica-player';
+    iframe.src='https://www.tvjustica.jus.br/';
+    iframe.title='TV Justiça Ao Vivo';
+    iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
+    iframe.allowFullscreen=true;
+    iframe.frameBorder='0';
+    iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000';
+    screen.appendChild(iframe);
+    p.style.display='none';
+    setStatus('TV Justiça • transmissão oficial');
     return;
   }
   if(name==='Cultura' || name==='CazeTV' || name==='Justica' || name==='RedeVida' || name==='GeTV'){
