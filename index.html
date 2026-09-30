@@ -105,24 +105,24 @@ async function openChannel(name){
     return;
   }
   if(name==='SBT'){
-    setMsg('Carregando o SBT Ao Vivo...');
+    setMsg('Carregando o player oficial do SBT Ao Vivo...');
     b.style.display='none';
     const screen=document.getElementById('screen');
     const oldFrame=document.getElementById('externalFrame');
     if(oldFrame) oldFrame.remove();
     const iframe=document.createElement('iframe');
     iframe.id='externalFrame';
-    iframe.src='https://youtube-player.sbtlab.io/?adunit=%2F1011235%2FSBT_Videos%2FEspeciais%2FSBT_Live%2Fvideo&cust_params=conteudo%3Dao-vivo%26tema%3Dsbt-live%26tipo%3Dlive&description_url=https%3A%2F%2Fsbt.com.br%2Fao-vivo&env=vp&gdfp_req=1&hl=pt&iu=%2F1011235%2FSBT_Videos%2FEspeciais%2FSBT_Live%2Fvideo&output=vast&plcmt=1&sz=940x529&t=0&url=https%3A%2F%2Fsbt.com.br%2Fao-vivo&vcomp=2&vid=ABVQXgr2LW4&videoID=ABVQXgr2LW4&vpa=click&vpmute=0';
+    iframe.src='https://youtube-player.sbtlab.io/?videoID=R0ZJ4uevOd4&t=0&adunit=%2F1011235%2Fsbt%2Fhome%2Fao-vivo&iu=%2F1011235%2Fsbt%2Fhome%2Fao-vivo&env=vp&gdfp_req=1&output=vast&sz=1280x720&vid=R0ZJ4uevOd4&vpa=auto&vpmute=1&hl=pt&plcmt=1&vcomp=2&cust_params=conteudo%3Dao-vivo%26tema%3Dsbt-live%26tipo%3Dlive';
     iframe.title='SBT Ao Vivo';
-    iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
+    iframe.allow='autoplay; fullscreen; picture-in-picture';
     iframe.allowFullscreen=true;
-    iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000';
+    iframe.style.cssText='width:100%;height:min(62vw,560px);min-height:260px;border:0;display:block;background:#000';
     screen.appendChild(iframe);
     p.style.display='none';
-    setStatus('SBT • transmissão oficial');
+    setStatus('SBT • Player oficial SBT');
     return;
   }
-  if(name==='RedeVida'){
+    if(name==='RedeVida'){
     setMsg('Carregando a transmissão oficial...');
     b.style.display='none';
     const screen=document.getElementById('screen');
