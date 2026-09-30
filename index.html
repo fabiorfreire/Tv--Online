@@ -155,28 +155,11 @@ async function openChannel(name){
   }
   if(name==='RedeTV'){
     const url='https://www.redetv.uol.com.br/aovivo/';
-    setMsg('Carregando o player oficial da RedeTV!...');
-    b.style.display='none';
-    const screen=document.getElementById('screen');
-    const old=screen.querySelector('.redetv-wrap'); if(old) old.remove();
-
-    // Mostra somente a área do player oficial, ocultando o restante da página.
-    const wrap=document.createElement('div');
-    wrap.className='redetv-wrap';
-    wrap.style.cssText='position:absolute;inset:0;overflow:hidden;background:#000';
-
-    const iframe=document.createElement('iframe');
-    iframe.className='redetv-player';
-    iframe.src=url;
-    iframe.title='RedeTV! Ao Vivo';
-    iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
-    iframe.allowFullscreen=true;
-    iframe.style.cssText='position:absolute;left:0;top:-92px;width:100%;height:calc(100% + 92px);border:0;display:block;background:#000';
-
-    wrap.appendChild(iframe);
-    screen.appendChild(wrap);
-    p.style.display='none';
-    setStatus('RedeTV! • player oficial');
+    b.textContent='▶ ABRIR REDETV! AO VIVO';
+    b.onclick=()=>window.open(url,'_blank','noopener,noreferrer');
+    b.style.display='inline-block';
+    setMsg('A RedeTV! disponibiliza a transmissão pelo seu site oficial.');
+    setStatus('RedeTV! • acesso à transmissão oficial');
     return;
   }
   if(name==='Gazeta'){
