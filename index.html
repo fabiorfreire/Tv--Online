@@ -27,7 +27,7 @@ h2{font-size:18px;margin:24px 0 12px}.channels{display:grid;grid-template-column
 <div class="screen" id="screen"><video id="liveVideo" controls playsinline autoplay muted></video><div class="tvmsg" id="placeholder"><div class="live"><i></i> AO VIVO</div><strong id="playerTitle">TV Online Freire</strong><span id="playerMsg">Selecione um canal para iniciar a transmissão.</span><button id="officialOpen" onclick="openOfficialChannel()" style="display:none;margin-top:8px">▶ Assistir ao vivo</button></div></div>
 <div class="controls"><button onclick="fullscreen()">⛶ Tela cheia</button><button class="secondary" onclick="reloadPlayer()">↻ Recarregar</button><button class="secondary" onclick="stopPlayer()">■ Parar</button></div>
 </section>
-<div class="status" id="status">TV Online Freire • V3.4 — 12 canais</div>
+<div class="status" id="status">TV Online Freire • V3.5 — 12 canais</div>
 <h2>Canais</h2>
 <section class="channels">
 <div class="channel" onclick="openChannel('TVBrasil')"><div class="badge">TB</div><b>TV Brasil</b><small>Ao Vivo</small></div>
@@ -155,13 +155,15 @@ async function openChannel(name){
   }
   if(name==='RedeTV'){
     const url='https://www.redetv.uol.com.br/aovivo/';
-    // A página oficial da RedeTV! não disponibiliza neste projeto um
-    // embed de vídeo estável. Não exibimos a página inteira dentro do player.
-    b.textContent='▶ Abrir RedeTV! ao vivo';
+    // RedeTV: não incorporar a página completa. Mostrar somente uma tela
+    // própria do TV Online Freire e permitir acesso ao player oficial.
+    p.style.display='flex';
+    b.textContent='▶ ABRIR REDETV! AO VIVO';
     b.onclick=()=>window.open(url,'_blank','noopener,noreferrer');
     b.style.display='inline-block';
-    setMsg('A RedeTV! disponibiliza a transmissão pelo seu site oficial.');
-    setStatus('RedeTV! • acesso pela transmissão oficial');
+    document.getElementById('playerTitle').textContent='RedeTV!';
+    setMsg('Toque no botão abaixo para assistir à transmissão oficial.');
+    setStatus('RedeTV! • acesso ao player oficial');
     return;
   }
 
