@@ -33,6 +33,8 @@ h2{font-size:18px;margin:24px 0 12px}.channels{display:grid;grid-template-column
 <div class="channel" onclick="openChannel('Record')"><div class="badge">R</div><b>Record</b><small>RecordPlus</small></div>
 <div class="channel" onclick="openChannel('Band')"><div class="badge">B</div><b>Band</b><small>Band • Ao Vivo</small></div>
 <div class="channel" onclick="openChannel('SBT')"><div class="badge">S</div><b>SBT</b><small>SBT • Ao Vivo</small></div>
+<div class="channel" onclick="openChannel('RedeTV')"><div class="badge">R</div><b>RedeTV!</b><small>RedeTV! • Ao Vivo</small></div>
+<div class="channel" onclick="openChannel('Gazeta')"><div class="badge">G</div><b>TV Gazeta</b><small>Gazeta • Ao Vivo</small></div>
 </section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.12/dist/shaka-player.compiled.min.js"></script>
@@ -41,7 +43,9 @@ const channels={
 Globo:'https://globoplay.globo.com/tv-globo/ao-vivo/7832875/',
 Record:'https://record.r7.com/record-emissoras/sudeste/record-paulista/',
 Band:'https://www.band.com.br/ao-vivo',
-SBT:'https://www.sbt.com.br/ao-vivo'
+SBT:'https://www.sbt.com.br/ao-vivo',
+RedeTV:'https://www.redetv.uol.com.br/aovivo/',
+Gazeta:'https://www.tvgazeta.com.br/aovivo/'
 };
 let current=''; let shakaPlayer=null;
 
@@ -106,6 +110,23 @@ async function openChannel(name){
     screen.appendChild(iframe);
     p.style.display='none';
     setStatus('SBT • player oficial incorporado');
+    return;
+  }
+  if(name==='RedeTV' || name==='Gazeta'){
+    const url=name==='RedeTV' ? 'https://www.redetv.uol.com.br/aovivo/' : 'https://www.tvgazeta.com.br/aovivo/';
+    setMsg('Carregando a transmissão oficial...');
+    b.style.display='none';
+    const screen=document.getElementById('screen');
+    const iframe=document.createElement('iframe');
+    iframe.className=name.toLowerCase()+'-player';
+    iframe.src=url;
+    iframe.title=name==='RedeTV' ? 'RedeTV! Ao Vivo' : 'TV Gazeta Ao Vivo';
+    iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
+    iframe.allowFullscreen=true;
+    iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#000';
+    screen.appendChild(iframe);
+    p.style.display='none';
+    setStatus(name==='RedeTV' ? 'RedeTV! • transmissão oficial incorporada' : 'TV Gazeta • transmissão oficial incorporada');
     return;
   }
   if(name!=='Record' && name!=='SBT'){
