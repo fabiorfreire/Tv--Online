@@ -111,7 +111,7 @@ async function openChannel(name){
     const old=screen.querySelector('.sbt-player'); if(old) old.remove();
     const iframe=document.createElement('iframe');
     iframe.className='sbt-player';
-    iframe.src='https://youtube-player.sbtlab.io/?videoID=R0ZJ4uevOd4&t=0&adunit=%2F1011235%2Fsbt%2Fhome%2Fao-vivo&iu=%2F1011235%2Fsbt%2Fhome%2Fao-vivo&env=vp&gdfp_req=1&output=vast&sz=1280x720&vid=R0ZJ4uevOd4&vpa=auto&vpmute=1&hl=pt&plcmt=1&vcomp=2&cust_params=conteudo%3Dao-vivo%26tema%3Dsbt-live%26tipo%3Dlive';
+    iframe.src='https://www.sbt.com.br/ao-vivo';
     iframe.title='SBT Ao Vivo';
     iframe.allow='autoplay; encrypted-media; picture-in-picture';
     iframe.allowFullscreen=true;
@@ -123,7 +123,7 @@ async function openChannel(name){
   }
   if(name==='TVBrasil' || name==='Cultura' || name==='CazeTV' || name==='Justica' || name==='RedeVida' || name==='GeTV'){
     const urls={
-      TVBrasil:'https://aovivo.ebc.com.br/embed-tvbrasil.html',
+      TVBrasil:'https://tvbrasil.ebc.com.br/webtv/',
       Cultura:'https://culturaplay.tvcultura.com.br/channels/14/embed',
       CazeTV:'https://cazetv.com/',
       Justica:'https://www.tvjustica.jus.br/',
@@ -168,6 +168,19 @@ async function openChannel(name){
     screen.appendChild(iframe);
     p.style.display='none';
     setStatus(name==='RedeTV' ? 'RedeTV! • transmissão oficial incorporada' : 'TV Gazeta • transmissão oficial incorporada');
+
+    // A RedeTV! pode impedir iframe dependendo do navegador/política do site.
+    // Após alguns segundos, oferecemos o player oficial sem alterar os demais canais.
+    if(name==='RedeTV'){
+      setTimeout(()=>{
+        if(current!=='RedeTV') return;
+        b.textContent='▶ Abrir RedeTV! ao vivo';
+        b.onclick=()=>window.open(url,'_blank','noopener,noreferrer');
+        b.style.display='inline-block';
+        setMsg('Se o player não aparecer, abra a transmissão oficial da RedeTV!.');
+        setStatus('RedeTV! • player oficial — opção de abertura direta disponível');
+      },4500);
+    }
     return;
   }
   if(name!=='Record' && name!=='SBT'){
