@@ -141,14 +141,14 @@ async function openChannel(name){
     return;
   }
   if(name==='Justica'){
-    setMsg('Carregando a TV Justiça oficial...');
+    setMsg('Carregando a transmissão oficial da TV Justiça...');
     b.style.display='none';
     const screen=document.getElementById('screen');
     const old=screen.querySelector('.justica-player'); if(old) old.remove();
     const iframe=document.createElement('iframe');
     iframe.className='justica-player';
-    iframe.src='https://www.tvjustica.jus.br/';
-    iframe.title='TV Justiça Ao Vivo';
+    iframe.src='https://www.youtube.com/embed/XfwDB9udBLw?autoplay=1&rel=0';
+    iframe.title='TV Justiça — Ao vivo';
     iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
     iframe.allowFullscreen=true;
     iframe.frameBorder='0';
